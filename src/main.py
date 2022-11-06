@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd 
-import os, re, time, math, tqdm, itertools
+import os, re, time, math, tqdm, itertools, sys
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
@@ -202,10 +202,11 @@ def main(path):
 
     # plot_number(network_data)
     # scatterplot(network_data)
-    circle(network_data)
+    # circle(network_data)
     
 
 if __name__ == '__main__':
+    
     path = "/Users/TrungLT/CNN/Input/"
 
     if os.path.isfile(path):
