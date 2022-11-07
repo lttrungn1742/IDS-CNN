@@ -101,7 +101,7 @@ def plot_number(path="/Users/TrungLT/CNN/Input/", isShowInfomation=False):
     else:
         print("The path is not file or directory")
 
-def _circle(network_data):
+def circle(network_data):
     cleaned_data = network_data.dropna()
     cleaned_data.isna().sum().to_numpy()
     label_encoder = LabelEncoder()
@@ -127,9 +127,12 @@ def _circle(network_data):
     # merging the original dataframe
     X = pd.concat([data_1, data_2, data_3], sort=True)
     y = pd.concat([y_benign, y_bf, y_ssh], sort=True)
-    data_1_resample = resample(data_1, n_samples=20000, random_state=123, replace=True)
-    data_2_resample = resample(data_2, n_samples=20000, random_state=123, replace=True)
-    data_3_resample = resample(data_3, n_samples=20000, random_state=123, replace=True)
+    data_1_resample = resample(data_1, n_samples=20000, 
+                           random_state=123, replace=True)
+    data_2_resample = resample(data_2, n_samples=20000, 
+                            random_state=123, replace=True)
+    data_3_resample = resample(data_3, n_samples=20000, 
+                            random_state=123, replace=True)
     train_dataset = pd.concat([data_1_resample, data_2_resample, data_3_resample])
     train_dataset.head(2)
     plt.figure(figsize=(10, 8))
@@ -138,6 +141,7 @@ def _circle(network_data):
     plt.pie(train_dataset['Label'].value_counts(), labels=['Benign', 'BF', 'BF-SSH'], colors=['blue', 'magenta', 'cyan'])
     p = plt.gcf()
     p.gca().add_artist(circle)
+
 
     test_dataset = train_dataset.sample(frac=0.1)
     target_train = train_dataset['Label']
@@ -195,25 +199,7 @@ def _circle(network_data):
     plt.plot(epochs, loss, label='loss', color='g')
     plt.plot(epochs, val_loss, label='val_loss', color='r')
     plt.legend()
-
-
-def circle(path="/Users/TrungLT/CNN/Input/", isShowInfomation=False):
-    if os.path.isfile(path):
-        network_data = get_network_data(path, isShowInfomation=isShowInfomation)
-        _circle(network_data)
-
-    elif os.path.isdir(path):
-        for dirname, _, filenames in os.walk(path):
-            for filename in filenames:
-                file = os.path.join(dirname, filename)
-                print(f"-  {file}")
-                try:
-                    network_data = get_network_data(file, isShowInfomation=isShowInfomation)
-                    _circle(network_data)
-                except Exception as err:
-                    print(err)
-    else:
-        print("The path is not file or directory")    
+    
 
 def Model():
     model = Sequential()
