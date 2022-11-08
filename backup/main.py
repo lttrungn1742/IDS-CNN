@@ -18,19 +18,38 @@ from keras.callbacks import CSVLogger, ModelCheckpoint
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 from sklearn.utils import resample
 
-def scatterplot(network_data):
+def _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label):
     pyo.init_notebook_mode(connected=True)
-    fig = px.scatter(x=network_data["Flow Bytes/s"][:100000],
-                     y=network_data["Avg Bwd Segment Size"][:100000])
+    fig = px.scatter(x=network_data[vertical_axis_label][:100000],
+                     y=network_data[horizontal_axis_label][:100000])
     fig.show()
 
-def plot_number(network_data):
-    sns.set(rc={'figure.figsize': (12, 6)})
-    plt.xlabel('Attack Type')
+    sns.set(rc={'figure.figsize':(12, 6)})
+    plt.xlabel(horizontal_axis_label)
     sns.set_theme()
-    ax = sns.countplot(x='Label', data=network_data)
-    ax.set(xlabel='Attack Type', ylabel='Number of Attacks')
+    ax = sns.scatterplot(x=network_data[vertical_axis_label][:50000], y=network_data[horizontal_axis_label][:50000], 
+                hue='Label', data=network_data)
+    ax.set(xlabel=vertical_axis_label, ylabel=horizontal_axis_label)   
     plt.show()
+
+
+def scatter_plot(path="/input/", isShowInfomation=False, vertical_axis_label="Bwd Packets/s", horizontal_axis_label="Fwd Packet Length Min"):
+    if os.path.isfile(path):
+        network_data = get_network_data(path, isShowInfomation=isShowInfomation)
+        _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label)
+
+    elif os.path.isdir(path):
+        for dirname, _, filenames in os.walk(path):
+            for filename in filenames:
+                file = os.path.join(dirname, filename)
+                print(f"-  {file}")
+                try:
+                    network_data = get_network_data(file, isShowInfomation=isShowInfomation)
+                    _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label)
+                except Exception as err:
+                    print(err)
+    else:
+        print("The path is not file or directory")
 
 def loading_data(path):
     """
@@ -56,7 +75,7 @@ def sanitize(column):
         column = column[1:]
     return column
 
-def plot_number(network_data):
+def _plot_number(network_data):
     sns.set(rc={'figure.figsize': (12, 6)})
     plt.xlabel('Attack Type')
     sns.set_theme()
@@ -64,7 +83,25 @@ def plot_number(network_data):
     ax.set(xlabel='Attack Type', ylabel='Number of Attacks')
     plt.show()
 
-def circle(network_data):
+def plot_number(path="/input/", isShowInfomation=False):
+    if os.path.isfile(path):
+        network_data = get_network_data(path, isShowInfomation=isShowInfomation)
+        _plot_number(network_data)
+
+    elif os.path.isdir(path):
+        for dirname, _, filenames in os.walk(path):
+            for filename in filenames:
+                file = os.path.join(dirname, filename)
+                print(f"-  {file}")
+                try:
+                    network_data = get_network_data(file, isShowInfomation=isShowInfomation)
+                    _plot_number(network_data)
+                except Exception as err:
+                    print(err)
+    else:
+        print("The path is not file or directory")
+
+def _circle(network_data):
     cleaned_data = network_data.dropna()
     cleaned_data.isna().sum().to_numpy()
     label_encoder = LabelEncoder()
@@ -90,12 +127,9 @@ def circle(network_data):
     # merging the original dataframe
     X = pd.concat([data_1, data_2, data_3], sort=True)
     y = pd.concat([y_benign, y_bf, y_ssh], sort=True)
-    data_1_resample = resample(data_1, n_samples=20000, 
-                           random_state=123, replace=True)
-    data_2_resample = resample(data_2, n_samples=20000, 
-                            random_state=123, replace=True)
-    data_3_resample = resample(data_3, n_samples=20000, 
-                            random_state=123, replace=True)
+    data_1_resample = resample(data_1, n_samples=20000, random_state=123, replace=True)
+    data_2_resample = resample(data_2, n_samples=20000, random_state=123, replace=True)
+    data_3_resample = resample(data_3, n_samples=20000, random_state=123, replace=True)
     train_dataset = pd.concat([data_1_resample, data_2_resample, data_3_resample])
     train_dataset.head(2)
     plt.figure(figsize=(10, 8))
@@ -104,7 +138,6 @@ def circle(network_data):
     plt.pie(train_dataset['Label'].value_counts(), labels=['Benign', 'BF', 'BF-SSH'], colors=['blue', 'magenta', 'cyan'])
     p = plt.gcf()
     p.gca().add_artist(circle)
-
 
     test_dataset = train_dataset.sample(frac=0.1)
     target_train = train_dataset['Label']
@@ -162,7 +195,25 @@ def circle(network_data):
     plt.plot(epochs, loss, label='loss', color='g')
     plt.plot(epochs, val_loss, label='val_loss', color='r')
     plt.legend()
-    
+
+
+def circle(path="/input/", isShowInfomation=False):
+    if os.path.isfile(path):
+        network_data = get_network_data(path, isShowInfomation=isShowInfomation)
+        _circle(network_data)
+
+    elif os.path.isdir(path):
+        for dirname, _, filenames in os.walk(path):
+            for filename in filenames:
+                file = os.path.join(dirname, filename)
+                print(f"-  {file}")
+                try:
+                    network_data = get_network_data(file, isShowInfomation=isShowInfomation)
+                    _circle(network_data)
+                except Exception as err:
+                    print(err)
+    else:
+        print("The path is not file or directory")    
 
 def Model():
     model = Sequential()
@@ -192,35 +243,31 @@ def Model():
     return model
 
 
-def main(path):
+def get_network_data(path, isShowInfomation=True):
     network_data = loading_data(path)
     validate(network_data)
-
-    print(network_data.shape)
-    print(network_data.info())
-    print(network_data['Label'].value_counts())
-
-    # plot_number(network_data)
-    # scatterplot(network_data)
-    # circle(network_data)
+    if isShowInfomation:
+        print(network_data.shape)
+        print(network_data.info())
+        print(network_data['Label'].value_counts())
+    return network_data
     
 
-if __name__ == '__main__':
+def handler():
     
-    path = "/Users/TrungLT/CNN/Input/"
+    path = "/input/"
 
     if os.path.isfile(path):
-        main(path)
+        get_network_data(path)
     elif os.path.isdir(path):
         for dirname, _, filenames in os.walk(path):
             for filename in filenames:
                 file = os.path.join(dirname, filename)
                 print(f"We will show chart from {file}")
                 try:
-                    main(file)
+                    get_network_data(file)
                 except Exception as err:
                     print(err)
-                print("---ENDING---")
     else:
         print("The path is not file or directory")
 
