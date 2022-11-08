@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  lab:
+    build: .
+    volumes:
+      - ./Input:/input:rw
+      - ./lab:/home/jovyan/work:rw
+    ports:
+      - 80:8888
+    container_name: lab

@@ -10,7 +10,7 @@
 
 # Prepare
 
-- The `python 3.10` is used for this lab
+- The `python >= 3.8` is used for this lab
 - Install pipenv
   - Macos: `brew install pipenv`
   - Debian: `apt install pipenv`

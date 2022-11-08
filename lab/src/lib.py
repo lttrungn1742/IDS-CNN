@@ -33,7 +33,7 @@ def _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label):
     plt.show()
 
 
-def scatter_plot(path="/Users/TrungLT/CNN/Input/", isShowInfomation=False, vertical_axis_label="Bwd Packets/s", horizontal_axis_label="Fwd Packet Length Min"):
+def scatter_plot(path="/input", isShowInfomation=False, vertical_axis_label="Bwd Packets/s", horizontal_axis_label="Fwd Packet Length Min"):
     if os.path.isfile(path):
         network_data = get_network_data(path, isShowInfomation=isShowInfomation)
         _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label)
@@ -83,7 +83,7 @@ def _plot_number(network_data):
     ax.set(xlabel='Attack Type', ylabel='Number of Attacks')
     plt.show()
 
-def plot_number(path="/Users/TrungLT/CNN/Input/", isShowInfomation=False):
+def plot_number(path="/input", isShowInfomation=False):
     if os.path.isfile(path):
         network_data = get_network_data(path, isShowInfomation=isShowInfomation)
         _plot_number(network_data)
@@ -197,7 +197,7 @@ def _circle(network_data):
     plt.legend()
 
 
-def circle(path="/Users/TrungLT/CNN/Input/", isShowInfomation=False):
+def circle(path="/input", isShowInfomation=False):
     if os.path.isfile(path):
         network_data = get_network_data(path, isShowInfomation=isShowInfomation)
         _circle(network_data)
@@ -255,7 +255,7 @@ def get_network_data(path, isShowInfomation=True):
 
 def handler():
     
-    path = "/Users/TrungLT/CNN/Input/"
+    path = "/input"
 
     if os.path.isfile(path):
         get_network_data(path)

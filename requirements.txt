@@ -7,4 +7,3 @@ plotly
 scikit-learn
 keras
 tensorflow
-jupyter
