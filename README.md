@@ -11,9 +11,10 @@
 # Prepare
 
 - The `python >= 3.8` is used for this lab
-- Install pipenv
-  - Macos: `brew install pipenv`
-  - Debian: `apt install pipenv`
+- Install jupyter
+```
+
+```
 - Install dependencies: `pipenv install`
 - Download dataset: 
 ```
@@ -25,3 +26,7 @@ wget http://205.174.165.80/CICDataset/CIC-IDS-2017/Dataset/GeneratedLabelledFlow
 ```
     jupyter lab
 ```
+
+# Notebook
+
+`./lab/main.ipynb`

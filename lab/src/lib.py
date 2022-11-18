@@ -18,6 +18,8 @@ from keras.callbacks import CSVLogger, ModelCheckpoint
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 from sklearn.utils import resample
 
+default_path = os.getenv('CNN_LAB_PATH',"/Users/TrungLT/personal/CNN/Input")
+
 def _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label):
     pyo.init_notebook_mode(connected=True)
     fig = px.scatter(x=network_data[vertical_axis_label][:100000],
@@ -34,7 +36,7 @@ def _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label):
 
 
 
-def scatter_plot(path="/input", isShowInfomation=False, vertical_axis_label="Bwd Packets/s", horizontal_axis_label="Fwd Packet Length Min"):
+def scatter_plot(path=default_path, isShowInfomation=False, vertical_axis_label="Bwd Packets/s", horizontal_axis_label="Fwd Packet Length Min"):
     if os.path.isfile(path):
         network_data = get_network_data(path, isShowInfomation=isShowInfomation)
         _scatter_plot(network_data, vertical_axis_label, horizontal_axis_label)
@@ -52,26 +54,9 @@ def scatter_plot(path="/input", isShowInfomation=False, vertical_axis_label="Bwd
     else:
         print("The path is not file or directory")
 
-def loading_data(path):
-    """
-      https://stackoverflow.com/questions/45529507/unicodedecodeerror-utf-8-codec-cant-decode-byte-0x96-in-position-35-invalid
-    """
-    return pd.read_csv(path, encoding='cp1252')
 
-def validate(network_data):
-    """
-        ptr
-    """
-    try:
-        network_data['Label']
-    except KeyError:
-        columns = [sanitize(i) for i in network_data.columns]
-        network_data.columns = columns
 
 def sanitize(column):
-    """
-        de-recursion
-    """
     while ' ' == column[0]:
         column = column[1:]
     return column
@@ -84,9 +69,9 @@ def _plot_number(network_data):
     ax.set(xlabel='Attack Type', ylabel='Number of Attacks')
     plt.show()
 
-def plot_number(path="/input/", isShowInfomation=False):
+def plot_number(path = default_path, isShowInfomation = False):
     if os.path.isfile(path):
-        network_data = get_network_data(path, isShowInfomation=isShowInfomation)
+        network_data = get_network_data(path, isShowInfomation = isShowInfomation)
         _plot_number(network_data)
 
     elif os.path.isdir(path):
@@ -95,7 +80,7 @@ def plot_number(path="/input/", isShowInfomation=False):
                 file = os.path.join(dirname, filename)
                 print(f"-  {file}")
                 try:
-                    network_data = get_network_data(file, isShowInfomation=isShowInfomation)
+                    network_data = get_network_data(file, isShowInfomation = isShowInfomation)
                     _plot_number(network_data)
                 except Exception as err:
                     print(err)
@@ -197,9 +182,9 @@ def _circle(network_data):
     plt.plot(epochs, val_loss, label='val_loss', color='r')
     plt.legend()
 
-def circle(path="/input/", isShowInfomation=False):
+def circle(path = default_path, isShowInfomation = False):
     if os.path.isfile(path):
-        network_data = get_network_data(path, isShowInfomation=isShowInfomation)
+        network_data = get_network_data(path, isShowInfomation = isShowInfomation)
         _circle(network_data)
 
     elif os.path.isdir(path):
@@ -208,7 +193,7 @@ def circle(path="/input/", isShowInfomation=False):
                 file = os.path.join(dirname, filename)
                 print(f"-  {file}")
                 try:
-                    network_data = get_network_data(file, isShowInfomation=isShowInfomation)
+                    network_data = get_network_data(file, isShowInfomation = isShowInfomation)
                     _circle(network_data)
                 except Exception as err:
                     print(err)
@@ -242,6 +227,23 @@ def Model():
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
+def sanitize(column):
+    while ' ' == column[0]:
+        column = column[1:]
+    return column
+
+def loading_data(path):
+    """
+      https://stackoverflow.com/questions/45529507/unicodedecodeerror-utf-8-codec-cant-decode-byte-0x96-in-position-35-invalid
+    """
+    return pd.read_csv(path, encoding='cp1252')
+
+def validate(network_data):
+    try:
+        network_data['Label']
+    except KeyError:
+        columns = [sanitize(i) for i in network_data.columns]
+        network_data.columns = columns
 
 def get_network_data(path, isShowInfomation=True):
     network_data = loading_data(path)
@@ -254,7 +256,7 @@ def get_network_data(path, isShowInfomation=True):
     
 
 def handler():
-    path = "/input"
+    path = default_path
     if os.path.isfile(path):
         get_network_data(path)
     elif os.path.isdir(path):

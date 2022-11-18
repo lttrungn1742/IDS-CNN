@@ -8,3 +8,5 @@ services:
     ports:
       - 80:8888
     container_name: lab
+    environment:
+      - CNN_LAB_PATH=/input
