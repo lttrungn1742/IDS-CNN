@@ -212,7 +212,7 @@ def main(path, x_header_networkdata = "Bwd Packets/s", y_header_networkdata = "m
     plt.plot(epochs, val_loss, label='val_loss', color='r')
     plt.legend()
 
-def handler():
+def analyst():
     path = default_path
     if os.path.isfile(path):
         get_network_data(path)
@@ -222,7 +222,7 @@ def handler():
                 file = os.path.join(dirname, filename)
                 print(f"We will show chart from {file}")
                 try:
-                    get_network_data(file)
+                    main(file)
                 except Exception as err:
                     print(err)
     else:
