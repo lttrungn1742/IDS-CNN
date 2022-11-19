@@ -27,6 +27,8 @@ wget http://205.174.165.80/CICDataset/CIC-IDS-2017/Dataset/GeneratedLabelledFlow
     jupyter lab
 ```
 
+- https://numpy.org/doc/stable/reference/generated/numpy.zeros.html
+
 # Notebook
 
 `./lab/main.ipynb`
