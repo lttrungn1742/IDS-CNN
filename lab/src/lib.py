@@ -212,8 +212,8 @@ def main(path, x_header_networkdata = "Bwd Packets/s", y_header_networkdata = "m
     plt.plot(epochs, val_loss, label='val_loss', color='r')
     plt.legend()
 
-def analyst():
-    path = default_path
+def analyst(path=None):
+    path = path if path else default_path
     if os.path.isfile(path):
         get_network_data(path)
     elif os.path.isdir(path):
